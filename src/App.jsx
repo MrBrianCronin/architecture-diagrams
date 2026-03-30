@@ -209,15 +209,15 @@ function DiagramPage({ diagram, children, selected, infoDb, onSelect, color }) {
           </div>
           <p style={{ fontSize: 14, color: '#5A5E6B', lineHeight: 1.7, maxWidth: 800 }}>{diagram.desc}</p>
         </div>
+        {!selected && (
+          <div className="click-hint" style={{ textAlign: 'center', marginBottom: 12, fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <span style={{ fontSize: 16 }}>👇</span> Click any component to explore its role in this architecture
+          </div>
+        )}
         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #E2E6EF', padding: 24 }}>
           {children}
         </div>
         <DetailPanel info={info} onClose={() => onSelect(null)} color={color} />
-        {!selected && (
-          <div className="click-hint" style={{ textAlign: 'center', marginTop: 16, fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            <span style={{ fontSize: 16 }}>👆</span> Click any component to explore its role in this architecture
-          </div>
-        )}
         <p style={{ fontSize: 12, color: '#8792A8', textAlign: 'center', fontStyle: 'italic', marginTop: 8 }}>{CARD_DISCLAIMER}</p>
       </main>
       <Footer />
