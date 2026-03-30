@@ -190,7 +190,13 @@ function DiagramPage({ diagram, children, selected, infoDb, onSelect, color }) {
   const info = selected ? infoDb[selected] : null;
   return (
     <div style={S.page}>
-      <style>{`@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }`}</style>
+      <style>{`
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+        @keyframes hintPulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+        svg g[style*="cursor: pointer"] rect { transition: stroke-width 0.15s ease, filter 0.15s ease; }
+        svg g[style*="cursor: pointer"]:hover rect { filter: brightness(0.95); stroke-width: 2 !important; }
+        .click-hint { animation: hintPulse 2s ease-in-out 3; color: ${diagram.tagColor}; }
+      `}</style>
       <Header showBack />
       <main style={{ flex: 1, padding: '24px 32px', maxWidth: 1200, width: '100%', margin: '0 auto' }}>
         <div style={{ marginBottom: 24 }}>
@@ -207,7 +213,11 @@ function DiagramPage({ diagram, children, selected, infoDb, onSelect, color }) {
           {children}
         </div>
         <DetailPanel info={info} onClose={() => onSelect(null)} color={color} />
-        {!selected && <p style={{ fontSize: 12, color: '#8792A8', textAlign: 'center', marginTop: 16 }}>Click any component to learn more about its role in this architecture pattern.</p>}
+        {!selected && (
+          <div className="click-hint" style={{ textAlign: 'center', marginTop: 16, fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <span style={{ fontSize: 16 }}>👆</span> Click any component to explore its role in this architecture
+          </div>
+        )}
         <p style={{ fontSize: 12, color: '#8792A8', textAlign: 'center', fontStyle: 'italic', marginTop: 8 }}>{CARD_DISCLAIMER}</p>
       </main>
       <Footer />
@@ -360,13 +370,19 @@ function SnowflakePage() {
         <rect x="140" y="40" width="105" height="260" rx="12" fill="#FAEEDA" stroke="#BA7517" strokeWidth="0.5"/>
         <text style={{ fontSize:13, fontWeight:500, fill:'#633806' }} x="192" y="58" textAnchor="middle">Bronze</text>
         <text style={{ fontSize:10, fill:'#854F0B' }} x="192" y="72" textAnchor="middle">Raw / staged</text>
-        {[['Raw tables','1:1 source',85,'Raw tables'],['Dynamic','Auto-refresh',130,'Dynamic'],['Snowpipe','Streaming',175,'Snowpipe'],['CDC logs','Streams',220,'CDC logs']].map(([t,s,y,k]) => (
+        {[['Raw tables','1:1 source',85,'Raw tables'],['Snowpipe','Streaming',175,'Snowpipe'],['CDC logs','Streams',220,'CDC logs']].map(([t,s,y,k]) => (
           <g key={k} onClick={() => toggle(k)} style={{ cursor:'pointer' }} opacity={hi(k)}>
             <rect x="148" y={y} width="88" height="35" rx="6" fill="#FAEEDA" stroke="#BA7517" strokeWidth={sel===k?2:0.5}/>
             <text style={{ fontSize:11, fontWeight:500, fill:'#633806' }} x="192" y={y+13} textAnchor="middle" dominantBaseline="central">{t}</text>
             <text style={{ fontSize:10, fill:'#854F0B' }} x="192" y={y+26} textAnchor="middle" dominantBaseline="central">{s}</text>
           </g>
         ))}
+        {/* Dynamic table - special styling */}
+        <g onClick={() => toggle('Dynamic')} style={{ cursor:'pointer' }} opacity={hi('Dynamic')}>
+          <rect x="148" y="130" width="88" height="35" rx="6" fill="#FFF3D6" stroke="#D4920A" strokeWidth={sel==='Dynamic'?2.5:1.5} strokeDasharray="4 2"/>
+          <text style={{ fontSize:11, fontWeight:500, fill:'#633806' }} x="192" y="143" textAnchor="middle" dominantBaseline="central">Dynamic</text>
+          <text style={{ fontSize:10, fill:'#854F0B' }} x="192" y="156" textAnchor="middle" dominantBaseline="central">Auto-refresh</text>
+        </g>
 
         {/* dbt 1 */}
         <rect x="255" y="132" width="28" height="18" rx="4" fill="#EEEDFE" stroke="#534AB7" strokeWidth="0.5"/>
@@ -378,13 +394,19 @@ function SnowflakePage() {
         <rect x="260" y="40" width="105" height="260" rx="12" fill="#E1F5EE" stroke="#0F6E56" strokeWidth="0.5"/>
         <text style={{ fontSize:13, fontWeight:500, fill:'#04342C' }} x="312" y="58" textAnchor="middle">Silver</text>
         <text style={{ fontSize:10, fill:'#085041' }} x="312" y="72" textAnchor="middle">Cleaned</text>
-        {[['Conformed','Cleaned dims',85,'Conformed'],['Transient','dbt intermediates',130,'Transient'],['Fact tables','Event grain',175,'Fact tables'],['dbt tests','Quality gates',220,'dbt tests']].map(([t,s,y,k]) => (
+        {[['Conformed','Cleaned dims',85,'Conformed'],['Fact tables','Event grain',175,'Fact tables'],['dbt tests','Quality gates',220,'dbt tests']].map(([t,s,y,k]) => (
           <g key={k} onClick={() => toggle(k)} style={{ cursor:'pointer' }} opacity={hi(k)}>
             <rect x="268" y={y} width="88" height="35" rx="6" fill="#E1F5EE" stroke="#0F6E56" strokeWidth={sel===k?2:0.5}/>
             <text style={{ fontSize:11, fontWeight:500, fill:'#04342C' }} x="312" y={y+13} textAnchor="middle" dominantBaseline="central">{t}</text>
             <text style={{ fontSize:10, fill:'#085041' }} x="312" y={y+26} textAnchor="middle" dominantBaseline="central">{s}</text>
           </g>
         ))}
+        {/* Transient table - special styling */}
+        <g onClick={() => toggle('Transient')} style={{ cursor:'pointer' }} opacity={hi('Transient')}>
+          <rect x="268" y="130" width="88" height="35" rx="6" fill="#D0F0E4" stroke="#0A8A5C" strokeWidth={sel==='Transient'?2.5:1.5} strokeDasharray="4 2"/>
+          <text style={{ fontSize:11, fontWeight:500, fill:'#04342C' }} x="312" y="143" textAnchor="middle" dominantBaseline="central">Transient</text>
+          <text style={{ fontSize:10, fill:'#085041' }} x="312" y="156" textAnchor="middle" dominantBaseline="central">dbt intermediates</text>
+        </g>
 
         {/* dbt 2 */}
         <rect x="375" y="175" width="28" height="18" rx="4" fill="#EEEDFE" stroke="#534AB7" strokeWidth="0.5"/>
@@ -396,13 +418,19 @@ function SnowflakePage() {
         <rect x="380" y="40" width="105" height="260" rx="12" fill="#EAF3DE" stroke="#3B6D11" strokeWidth="0.5"/>
         <text style={{ fontSize:13, fontWeight:500, fill:'#173404' }} x="432" y="58" textAnchor="middle">Gold</text>
         <text style={{ fontSize:10, fill:'#27500A' }} x="432" y="72" textAnchor="middle">Business-ready</text>
-        {[['Metrics','KPIs / aggs',85,'Metrics'],['Semantic','Business terms',130,'Semantic'],['Data marts','Domain views',175,'Data marts'],['Hybrid','OLTP serving',220,'Hybrid']].map(([t,s,y,k]) => (
+        {[['Metrics','KPIs / aggs',85,'Metrics'],['Semantic','Business terms',130,'Semantic'],['Data marts','Domain views',175,'Data marts']].map(([t,s,y,k]) => (
           <g key={k} onClick={() => toggle(k)} style={{ cursor:'pointer' }} opacity={hi(k)}>
             <rect x="388" y={y} width="88" height="35" rx="6" fill="#EAF3DE" stroke="#3B6D11" strokeWidth={sel===k?2:0.5}/>
             <text style={{ fontSize:11, fontWeight:500, fill:'#173404' }} x="432" y={y+13} textAnchor="middle" dominantBaseline="central">{t}</text>
             <text style={{ fontSize:10, fill:'#27500A' }} x="432" y={y+26} textAnchor="middle" dominantBaseline="central">{s}</text>
           </g>
         ))}
+        {/* Hybrid table - special styling */}
+        <g onClick={() => toggle('Hybrid')} style={{ cursor:'pointer' }} opacity={hi('Hybrid')}>
+          <rect x="388" y="220" width="88" height="35" rx="6" fill="#D8EDCA" stroke="#2D7A0E" strokeWidth={sel==='Hybrid'?2.5:1.5} strokeDasharray="4 2"/>
+          <text style={{ fontSize:11, fontWeight:500, fill:'#173404' }} x="432" y="233" textAnchor="middle" dominantBaseline="central">Hybrid</text>
+          <text style={{ fontSize:10, fill:'#27500A' }} x="432" y="246" textAnchor="middle" dominantBaseline="central">OLTP serving</text>
+        </g>
 
         {/* Consume */}
         <text style={{ fontSize:11, fill:'#8792A8', letterSpacing:'.06em' }} x="570" y="32" textAnchor="middle">CONSUME</text>
@@ -430,9 +458,9 @@ function SnowflakePage() {
 
         {/* Legend */}
         <text style={{ fontSize:11, fill:'#8792A8', letterSpacing:'.06em' }} x="340" y="405" textAnchor="middle">SNOWFLAKE TABLE TYPES</text>
-        {[['#FAEEDA','#BA7517','Dynamic tables — declarative auto-refresh on raw data',420],['#E1F5EE','#0F6E56','Transient tables — persist dbt intermediates without fail-safe',438],['#EAF3DE','#3B6D11','Hybrid tables — OLTP serving with row-level locking',456]].map(([f,s,t,y]) => (
-          <g key={y}><rect x="110" y={y} width="12" height="12" rx="3" fill={f} stroke={s} strokeWidth="0.5"/><text style={{ fontSize:11, fill:'#5F5E5A' }} x="128" y={y+10}>{t}</text></g>
-        ))}
+        <g><rect x="110" y="420" width="14" height="14" rx="3" fill="#FFF3D6" stroke="#D4920A" strokeWidth="1.5" strokeDasharray="4 2"/><text style={{ fontSize:11, fill:'#5F5E5A' }} x="130" y="430">Dynamic tables — declarative auto-refresh on raw data</text></g>
+        <g><rect x="110" y="440" width="14" height="14" rx="3" fill="#D0F0E4" stroke="#0A8A5C" strokeWidth="1.5" strokeDasharray="4 2"/><text style={{ fontSize:11, fill:'#5F5E5A' }} x="130" y="450">Transient tables — persist dbt intermediates without fail-safe</text></g>
+        <g><rect x="110" y="460" width="14" height="14" rx="3" fill="#D8EDCA" stroke="#2D7A0E" strokeWidth="1.5" strokeDasharray="4 2"/><text style={{ fontSize:11, fill:'#5F5E5A' }} x="130" y="470">Hybrid tables — OLTP serving with row-level locking</text></g>
       </svg>
     </DiagramPage>
   );
