@@ -6,7 +6,6 @@ const CARD_DISCLAIMER = 'Illustrative design pattern — not based on any compan
 const DIAGRAMS = [
   { id: 'aws', title: 'AWS native event-driven platform', tag: 'Cloud Architecture', tagColor: '#F59E0B', desc: 'Event-driven data platform using API Gateway, EventBridge, Kinesis, Lambda, AWS Glue, and a multi-store persistence layer feeding downstream consumers.', icon: '☁️' },
   { id: 'snowflake', title: 'Snowflake + dbt modern data stack', tag: 'Data Engineering', tagColor: '#4F6EF7', desc: 'Medallion architecture with bronze/silver/gold layers, showcasing dynamic tables, transient tables for dbt intermediates, and hybrid tables for OLTP serving.', icon: '❄️' },
-  { id: 'ai-analytics', title: 'AI-driven conversational analytics', tag: 'Agentic AI', tagColor: '#8B5CF6', desc: 'Agent orchestration that scans data sources to auto-generate semantic views and callable skills, consumed by any LLM through MCP or tool-use protocols.', icon: '🤖' },
 ];
 
 // ── Component info databases ──
@@ -50,33 +49,6 @@ const SNOW_INFO = {
   'App layer': { title: 'Application Layer — Via hybrid tables', desc: 'Applications that interact with Snowflake hybrid tables for OLTP-like workloads — user session state, real-time inventory, app configuration. Combines transactional and analytical data on one platform.' },
   'Orchestration': { title: 'dbt Cloud / Airflow — Orchestration', desc: 'Scheduling and CI/CD pipeline that runs dbt models on a cadence, manages dependencies, runs tests, and deploys changes through environments (dev → staging → production). Includes alerting on failures.' },
   'Governance': { title: 'Data Governance', desc: 'End-to-end governance including column-level lineage via dbt docs, dynamic data masking for PII, object tagging for classification, role-based access control, and audit trails for compliance.' },
-};
-
-const AI_INFO = {
-  'Databases': { title: 'Database Sources', desc: 'Relational and NoSQL databases that contain the organization\'s operational and analytical data. The scanner agent connects via JDBC/ODBC, reads schema metadata, samples data profiles, and maps relationships between tables.' },
-  'Catalogs': { title: 'Data Catalogs — Alation / Collibra', desc: 'Enterprise data catalogs that store curated metadata, business glossaries, and data stewardship information. The scanner agent extracts business context, ownership, and data quality scores that enrich the semantic layer.' },
-  'Dictionaries': { title: 'Data Dictionaries', desc: 'Column-level definitions and documentation maintained by data teams. Provides the business meaning behind technical column names — essential for the mapping agent to generate accurate semantic views.' },
-  'BI tools': { title: 'BI Tool Metadata', desc: 'Existing Tableau workbooks, Power BI reports, and Looker explores contain implicit business logic — calculated fields, filter definitions, and metric formulas. The scanner agent extracts these to avoid reinventing definitions.' },
-  'dbt models': { title: 'dbt Models & Documentation', desc: 'dbt YAML schema files and SQL models contain transformation logic, column descriptions, and test definitions. The scanner agent parses these to understand data lineage and business rules already encoded in the pipeline.' },
-  'API specs': { title: 'API Specifications', desc: 'OpenAPI/Swagger specifications and API documentation that describe available data endpoints, request/response schemas, and authentication methods. Enables the skill builder to create callable data access patterns.' },
-  'Scanner': { title: 'Scanner Agent — Crawl & discover', desc: 'Autonomously connects to all registered data sources, reads schema metadata, samples data distributions, detects relationships, and builds a unified metadata graph. Runs on schedule to detect schema changes and new tables.' },
-  'Mapper': { title: 'Mapping Agent — Resolve & align', desc: 'Resolves naming conflicts across sources (e.g., "cust_id" vs "customer_id" vs "client_number"), maps business terms to physical columns, and identifies semantic duplicates. Produces a canonical business vocabulary.' },
-  'View builder': { title: 'View Builder Agent — Generate views', desc: 'Auto-generates SQL views that join, filter, and aggregate data according to the semantic model. Produces business-friendly abstractions like "active_customers_last_30_days" from raw tables, complete with documentation.' },
-  'Skill builder': { title: 'Skill Builder Agent — Create callable skills', desc: 'Creates reusable, parameterized query templates that LLMs can invoke without writing SQL. Skills like "get_revenue_by_region(quarter, region)" encapsulate business logic, access controls, and optimization hints.' },
-  'Validator': { title: 'Validation Agent — Test & verify', desc: 'Tests generated views and skills against known queries with expected results. Validates that semantic mappings produce correct answers, checks for performance issues, and flags potential data quality concerns before publishing.' },
-  'Semantic views': { title: 'Semantic Views — Business terms', desc: 'Auto-generated SQL views that present data in business-friendly terms. Instead of "SELECT acct_bal_amt FROM tbl_fa_positions", users see "account_balance" from the "financial_advisor_positions" view.' },
-  'Skills library': { title: 'Skills Library — Query templates', desc: 'A registry of callable, parameterized query functions that any LLM can invoke. Each skill has a natural language description, typed parameters, and returns structured results. Think of it as a function library for data access.' },
-  'Metric catalog': { title: 'Metric Catalog — KPI definitions', desc: 'Curated, versioned definitions of business KPIs with exact SQL formulas, grain specifications, and dimension breakdowns. Ensures every LLM consumer calculates "monthly active users" or "net revenue retention" identically.' },
-  'Guardrails': { title: 'Guardrails — Access & cost controls', desc: 'Policy layer that enforces row-level security, column masking for PII, query cost limits (prevent runaway full-table scans), and rate limiting. Every LLM-generated query passes through guardrails before execution.' },
-  'Context index': { title: 'Context Index — Embeddings', desc: 'Vector embeddings of skill descriptions, table documentation, and sample queries. When a user asks a natural language question, the LLM searches this index to find the most relevant skill or view to invoke.' },
-  'Chatbot': { title: 'Conversational Chatbot', desc: 'Natural language interface where users ask data questions in plain English. The LLM searches the context index, selects the right skill, invokes it with parameters extracted from the question, and presents results with narrative explanation.' },
-  'BI copilot': { title: 'BI Copilot — In-tool assistant', desc: 'An AI assistant embedded directly inside BI tools that helps analysts build queries, suggests relevant metrics, explains chart anomalies, and auto-generates dashboard narratives using the semantic layer.' },
-  'Report agent': { title: 'Report Agent — Auto-generation', desc: 'Scheduled agent that generates and distributes reports on a cadence — weekly business reviews, monthly compliance reports, daily KPI digests. Uses skills to pull data and LLMs to generate narrative summaries.' },
-  'Anomaly agent': { title: 'Anomaly Detection Agent', desc: 'Continuously monitors key metrics using the skills library, detects statistical anomalies (sudden drops, trend breaks, threshold violations), and surfaces proactive alerts to the right stakeholders via Slack, email, or PagerDuty.' },
-  'Any LLM': { title: 'Any LLM — Claude / GPT / Gemini', desc: 'The semantic layer is LLM-agnostic. Any model that supports tool use or MCP can discover and invoke skills. This prevents vendor lock-in and lets you swap or combine models based on cost, latency, or capability.' },
-  'MCP': { title: 'MCP / Tool Use Protocol', desc: 'Model Context Protocol (MCP) provides a universal interface for LLMs to discover available skills, understand their parameters, and invoke them. Any MCP-compatible LLM can connect to the semantic layer without custom integration.' },
-  'Governance': { title: 'Governance & Audit', desc: 'Complete audit trail of every LLM-generated query — who asked, what skill was invoked, what data was accessed, and what results were returned. RBAC ensures users only see data they\'re authorized for, even through natural language queries.' },
-  'Feedback': { title: 'Feedback Loop', desc: 'User corrections ("that\'s not the right metric for churn") flow back to the orchestrator, which updates the semantic views, refines skill definitions, and improves the context index. The system gets smarter with use.' },
 };
 
 function useRoute() {
@@ -467,106 +439,11 @@ function SnowflakePage() {
 }
 
 // ═══════════════════════════════════════
-// AI DIAGRAM
-// ═══════════════════════════════════════
-function AIPage() {
-  const [sel, setSel] = useState(null);
-  const toggle = (k) => setSel(s => s === k ? null : k);
-  const hi = (k) => sel === null ? 1 : sel === k ? 1 : 0.45;
-  const diagram = DIAGRAMS[2];
-
-  return (
-    <DiagramPage diagram={diagram} selected={sel} infoDb={AI_INFO} onSelect={setSel} color="#8B5CF6">
-      <svg width="100%" viewBox="0 0 680 470" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        <defs><marker id="aw3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
-
-        {/* Sources */}
-        <text style={{ fontSize:11, fill:'#8792A8', letterSpacing:'.06em' }} x="50" y="28" textAnchor="middle">SOURCES</text>
-        {[['Databases',42,'Databases'],['Catalogs',80,'Catalogs'],['Dictionaries',118,'Dictionaries'],['BI tools',156,'BI tools'],['dbt models',194,'dbt models'],['API specs',232,'API specs']].map(([l,y,k]) => (
-          <g key={k} onClick={() => toggle(k)} style={{ cursor:'pointer' }} opacity={hi(k)}>
-            <rect x="10" y={y} width="80" height="28" rx="6" fill="#F1EFE8" stroke="#B4B2A9" strokeWidth={sel===k?2:0.5}/>
-            <text style={{ fontSize:11, fontWeight:500, fill:'#1A1F36' }} x="50" y={y+14} textAnchor="middle" dominantBaseline="central">{l}</text>
-          </g>
-        ))}
-        {[56,94,132,170,208,246].map((y,i) => <line key={i} x1="90" y1={y} x2="118" y2={y < 150 ? 85 : 175} stroke="#B4B2A9" strokeWidth="0.5" markerEnd="url(#aw3)"/>)}
-
-        {/* Agent Orchestrator */}
-        <rect x="115" y="20" width="140" height="260" rx="14" fill="#EEEDFE" stroke="#534AB7" strokeWidth="0.5"/>
-        <text style={{ fontSize:12, fontWeight:500, fill:'#26215C' }} x="185" y="38" textAnchor="middle">Agent orchestrator</text>
-        {[['Scanner','Crawl + discover',50,'Scanner'],['Mapper','Resolve + align',96,'Mapper'],['View builder','Generate views',142,'View builder'],['Skill builder','Create skills',188,'Skill builder'],['Validator','Test + verify',234,'Validator']].map(([t,s,y,k]) => (
-          <g key={k} onClick={() => toggle(k)} style={{ cursor:'pointer' }} opacity={hi(k)}>
-            <rect x="125" y={y} width="120" height="35" rx="6" fill="#EEEDFE" stroke="#534AB7" strokeWidth={sel===k?2:0.5}/>
-            <text style={{ fontSize:11, fontWeight:500, fill:'#26215C' }} x="185" y={y+13} textAnchor="middle" dominantBaseline="central">{t}</text>
-            <text style={{ fontSize:10, fill:'#3C3489' }} x="185" y={y+26} textAnchor="middle" dominantBaseline="central">{s}</text>
-          </g>
-        ))}
-        {[85,131,177,223].map((y,i) => <line key={i} x1="185" y1={y} x2="185" y2={y+11} stroke="#534AB7" strokeWidth="0.5" markerEnd="url(#aw3)"/>)}
-
-        {/* Semantic Layer */}
-        <rect x="280" y="20" width="120" height="260" rx="14" fill="#E1F5EE" stroke="#0F6E56" strokeWidth="0.5"/>
-        <text style={{ fontSize:12, fontWeight:500, fill:'#04342C' }} x="340" y="38" textAnchor="middle">Semantic layer</text>
-        {[['Semantic views','Business terms',50,'Semantic views'],['Skills library','Query templates',96,'Skills library'],['Metric catalog','KPI defs',142,'Metric catalog'],['Guardrails','Access + cost',188,'Guardrails'],['Context index','Embeddings',234,'Context index']].map(([t,s,y,k]) => (
-          <g key={k} onClick={() => toggle(k)} style={{ cursor:'pointer' }} opacity={hi(k)}>
-            <rect x="288" y={y} width="104" height="35" rx="6" fill="#E1F5EE" stroke="#0F6E56" strokeWidth={sel===k?2:0.5}/>
-            <text style={{ fontSize:11, fontWeight:500, fill:'#04342C' }} x="340" y={y+13} textAnchor="middle" dominantBaseline="central">{t}</text>
-            <text style={{ fontSize:10, fill:'#085041' }} x="340" y={y+26} textAnchor="middle" dominantBaseline="central">{s}</text>
-          </g>
-        ))}
-        {[67,113,159,205,251].map((y,i) => <line key={i} x1="245" y1={y} x2="286" y2={y} stroke="#0F6E56" strokeWidth="0.5" markerEnd="url(#aw3)"/>)}
-
-        {/* LLM Consumers */}
-        <rect x="425" y="20" width="120" height="260" rx="14" fill="#FAECE7" stroke="#D85A30" strokeWidth="0.5"/>
-        <text style={{ fontSize:12, fontWeight:500, fill:'#712B13' }} x="485" y="38" textAnchor="middle">LLM consumers</text>
-        {[['Chatbot','NL to insight',50,'Chatbot'],['BI copilot','In-tool assist',96,'BI copilot'],['Report agent','Auto-generate',142,'Report agent'],['Anomaly agent','Monitor + alert',188,'Anomaly agent'],['Any LLM','Claude / GPT',234,'Any LLM']].map(([t,s,y,k]) => (
-          <g key={k} onClick={() => toggle(k)} style={{ cursor:'pointer' }} opacity={hi(k)}>
-            <rect x="433" y={y} width="104" height="35" rx="6" fill="#FAECE7" stroke="#D85A30" strokeWidth={sel===k?2:0.5}/>
-            <text style={{ fontSize:11, fontWeight:500, fill:'#712B13' }} x="485" y={y+13} textAnchor="middle" dominantBaseline="central">{t}</text>
-            <text style={{ fontSize:10, fill:'#993C1D' }} x="485" y={y+26} textAnchor="middle" dominantBaseline="central">{s}</text>
-          </g>
-        ))}
-        {[67,113,159,205,251].map((y,i) => <line key={i} x1="392" y1={y} x2="431" y2={y} stroke="#D85A30" strokeWidth="0.5" markerEnd="url(#aw3)"/>)}
-
-        {/* Users */}
-        <text style={{ fontSize:11, fill:'#8792A8', letterSpacing:'.06em' }} x="610" y="28" textAnchor="middle">USERS</text>
-        {[['C-suite',50],['Analysts',96],['Teams',142],['Ops',188],['Apps',234]].map(([l,y]) => (
-          <g key={l}><rect x="575" y={y} width="60" height="35" rx="6" fill="#EAF3DE" stroke="#3B6D11" strokeWidth="0.5"/><text style={{ fontSize:11, fontWeight:500, fill:'#173404' }} x="605" y={y+17} textAnchor="middle" dominantBaseline="central">{l}</text></g>
-        ))}
-        {[67,113,159,205,251].map((y,i) => <line key={i} x1="537" y1={y} x2="573" y2={y} stroke="#3B6D11" strokeWidth="0.5" markerEnd="url(#aw3)"/>)}
-
-        {/* Feedback */}
-        <g onClick={() => toggle('Feedback')} style={{ cursor:'pointer' }} opacity={hi('Feedback')}>
-          <path d="M605 272 L605 305 L185 305 L185 272" fill="none" stroke="#B4B2A9" strokeWidth="0.5" strokeDasharray="4 3" markerEnd="url(#aw3)"/>
-          <text style={{ fontSize:10, fill:'#8792A8' }} x="390" y="300" textAnchor="middle">Feedback loop — user corrections refine views + skills</text>
-        </g>
-
-        {/* MCP */}
-        <g onClick={() => toggle('MCP')} style={{ cursor:'pointer' }} opacity={hi('MCP')}>
-          <rect x="280" y="320" width="265" height="22" rx="5" fill="#E6F1FB" stroke="#85B7EB" strokeWidth={sel==='MCP'?2:0.5}/>
-          <text style={{ fontSize:10, fill:'#185FA5' }} x="412" y="331" textAnchor="middle" dominantBaseline="central">MCP / tool use — universal LLM interface</text>
-        </g>
-
-        {/* Governance */}
-        <g onClick={() => toggle('Governance')} style={{ cursor:'pointer' }} opacity={hi('Governance')}>
-          <rect x="115" y="350" width="430" height="22" rx="5" fill="#F1EFE8" stroke="#B4B2A9" strokeWidth={sel==='Governance'?2:0.5}/>
-          <text style={{ fontSize:10, fill:'#5F5E5A' }} x="330" y="361" textAnchor="middle" dominantBaseline="central">Governance — RBAC, PII masking, query cost limits, audit trail</text>
-        </g>
-
-        {/* Key principle */}
-        <text style={{ fontSize:11, fill:'#8792A8', letterSpacing:'.06em' }} x="340" y="400" textAnchor="middle">KEY DESIGN PRINCIPLE</text>
-        <text style={{ fontSize:12, fill:'#1A1F36' }} x="340" y="418" textAnchor="middle">Agents build the semantic layer once — any LLM consumes it</text>
-        <text style={{ fontSize:12, fill:'#1A1F36' }} x="340" y="435" textAnchor="middle">No LLM writes raw SQL against production tables directly</text>
-      </svg>
-    </DiagramPage>
-  );
-}
-
-// ═══════════════════════════════════════
 // APP ROUTER
 // ═══════════════════════════════════════
 export default function App() {
   const route = useRoute();
   if (route === 'aws') return <AWSPage />;
   if (route === 'snowflake') return <SnowflakePage />;
-  if (route === 'ai-analytics') return <AIPage />;
   return <Landing />;
 }
